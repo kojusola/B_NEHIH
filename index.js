@@ -26,10 +26,18 @@ app.use(fileUpload({
 const adminAuth = require('./routes/admin.auth.route');
 const article = require('./routes/articles.route');
 const comment = require('./routes/comments.articles.route');
+const newsletter = require('./routes/newsletter.route');
+const testimonials = require('./routes/testimonials');
+const joinNehih = require('./routes/joinNehih.route');
+const contactUs = require('./routes/contactUs.route.js');
 
 app.use('/admin', adminAuth);
 app.use('/blog', article);
 app.use('/comment', comment);
+app.use('/testimonials', testimonials);
+app.use('/newsletter', newsletter);
+app.use('/join-Nehih', joinNehih);
+app.use('/contact-us', contactUs);
 
 // checking whether app is working
 app.get('/', (req, res) => {

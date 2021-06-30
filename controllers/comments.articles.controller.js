@@ -48,7 +48,7 @@ exports.createComment= async(req, res) => {
            statusCode: 500
        });
    }
-}
+};
 
 
 exports.deleteComment = async(req, res) => {

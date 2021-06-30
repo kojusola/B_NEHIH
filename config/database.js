@@ -1,4 +1,4 @@
-// connecting to the database
+// connecting to the database;
 require('dotenv').config()
 const mongoose = require('mongoose');
 
@@ -16,4 +16,4 @@ const connectDB = async() => {
     }
 }
 
-module.exports = connectDB;
+module.exports = connectDB; 
