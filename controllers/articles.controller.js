@@ -2,6 +2,7 @@ const articleModel = require('../models/articles.models');
 const {newArticleValidation,validateImage} = require('../middleware/article.validation')
 const commentsModel = require('../models/comments.articles.models');
 const cloudinary = require("../helpers/cloudinary");
+const slugify = require("slugify");
 
 exports.getOneArticle = async(req, res) => {
 
@@ -88,6 +89,7 @@ exports.createArticle = async(req, res) => {
             statusCode: 400
         });
     };
+    const slug = slugify(req.body.articleName)
     try{
         const result = await cloudinary.uploader.upload(req.files.image.tempFilePath); 
         const article = new articleModel({
@@ -104,6 +106,7 @@ exports.createArticle = async(req, res) => {
             },
             category:req.body.category,
             verified: req.body.verified,
+            slug: slug
         });
         await article.save();
         if(article){

@@ -12,6 +12,10 @@ const articleModel = mongoose.Schema({
             type:String
         }
     },
+    slug:{
+        type: String,
+        required: true,
+    },
     articleName:{
         type: String,
         required: true,

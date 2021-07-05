@@ -19,6 +19,16 @@ const adminUserSchema = mongoose.Schema({
         required: true,
         min: 3,
         max: 255
+    },
+    role:{
+        type: String,
+        required: true,
+        min: 3,
+        default: 'admin'
+    },
+    authorized:{
+        type: String,
+        required:true
     }
 },{timestamps: true})
 
