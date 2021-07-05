@@ -71,6 +71,7 @@ try{
 }
 
 exports.createArticle = async(req, res) => {
+    console.log(req.body);
      const { error } = newArticleValidation(req.body);
     if (error) {
         return res.status(400).json({
@@ -96,8 +97,8 @@ exports.createArticle = async(req, res) => {
             creatorId: req.userId,
             articleName: req.body.articleName,
             articleContent: req.body.articleContent,
-            articlePublishDate: req.body.articlePublishDate,
-            articleEditDate: req.body.articleEditDate,
+            articlePublishDate: new Date.now(),
+            articleEditDate: new Date.now(),
             numberOfClaps: 0,
             faceImage:
              {
@@ -105,7 +106,7 @@ exports.createArticle = async(req, res) => {
                 cloundinaryId: result.public_id
             },
             category:req.body.category,
-            verified: req.body.verified,
+            verified: false,
             slug: slug
         });
         await article.save();
