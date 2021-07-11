@@ -5,7 +5,7 @@ const connectDB = require('./config/database');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const fileUpload = require("express-fileupload")
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 5000;
 
 
 

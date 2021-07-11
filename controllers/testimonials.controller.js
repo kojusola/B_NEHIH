@@ -37,7 +37,7 @@ exports.createtestimonial = async(req, res) => {
        if(testimonial){
            res.status(200).json({
                status: true,
-               msg: 'testimonial successfully saved',
+               msg: 'Testimonial successfully created',
                data: {
                testimonial
            },

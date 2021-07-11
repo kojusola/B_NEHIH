@@ -80,3 +80,36 @@ exports.getAllNehihApplications = async(req, res) => {
             });
         }
 };
+
+exports.getOneApplication= async(req, res) => {
+
+    try {
+        //get application from database
+        const application = await joinNehihModel.findOne({ "_id": req.query.applicationId });
+        const oopsMessage = 'Oops, Your application does not exists'
+        if (!application) {
+            return res.status(401).json({
+                status: false,
+                msg: oopsMessage,
+                data: null,
+                statusCode: 401
+            })
+        }
+        res.status(200).json({
+            status: true,
+            statusCode: 200,
+            msg: 'Application request successful',
+            data: {
+                application: application
+            }
+        })
+    } catch (error) {
+        console.log(error);
+        res.status(500).send({
+            status: false,
+            msg: 'Internal Server Error',
+            data: null,
+            statusCode: 500
+        });
+    }
+}

@@ -90,15 +90,17 @@ exports.createArticle = async(req, res) => {
             statusCode: 400
         });
     };
-    const slug = slugify(req.body.articleName)
     try{
+        const slug = await slugify(req.body.articleName);
+        console.log(slug)
         const result = await cloudinary.uploader.upload(req.files.image.tempFilePath); 
+        console.log(result);
         const article = new articleModel({
             creatorId: req.userId,
             articleName: req.body.articleName,
             articleContent: req.body.articleContent,
-            articlePublishDate: new Date.now(),
-            articleEditDate: new Date.now(),
+            articlePublishDate: req.body.articlePublishDate,
+            articleEditDate: req.body.articleEditDate,
             numberOfClaps: 0,
             faceImage:
              {
@@ -109,11 +111,12 @@ exports.createArticle = async(req, res) => {
             verified: false,
             slug: slug
         });
+        console.log(article)
         await article.save();
         if(article){
             res.status(200).json({
                 status: true,
-                msg: 'Article successfully saved',
+                msg: 'Article successfully created',
                 data: {
                 article
             },
@@ -122,11 +125,12 @@ exports.createArticle = async(req, res) => {
         }else{
         res.status(400).json({
             status: false,
-            msg: 'Article not saved',
+            msg: 'Article not created',
             statusCode: 400
         })
     }
     } catch (error) {
+        console.log(error)
         res.status(500).send({
             status: false,
             msg: 'Internal Server Error',
@@ -140,8 +144,9 @@ exports.createArticle = async(req, res) => {
 exports.updateArticle = async(req, res) => {
     try{
         const update = req.body
+        console.log(update);
         const article = await articleModel.findOneAndUpdate({"_id":req.query.articleId},update,{new:true});
-        // console.log(article);
+         console.log(article);
         if(article){
             res.status(200).json({
                 status: true,
@@ -236,6 +241,7 @@ exports.publishArticle = async(req, res) => {
         if(publishTicketStatus.verified){
             const article = await articleModel.findOneAndUpdate({"_id":req.query.articleId}
             ,{"$set":{"verified":false}},{new:true});
+            console.log(article);
             if(article){
                 res.status(200).json({
                     status: true,
@@ -254,7 +260,7 @@ exports.publishArticle = async(req, res) => {
             }
         }else{
             const article = await articleModel.findOneAndUpdate({"_id":req.query.articleId}
-            ,{"$set":{"verified":true}},{new:true});
+            ,{"$set":{"verified":true,"articlePublishDate": new Date()}},{new:true});
             console.log(article);
             if(article){
                 res.status(200).json({

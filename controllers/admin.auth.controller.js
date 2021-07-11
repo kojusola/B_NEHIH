@@ -27,7 +27,7 @@ exports.adminLogin = async(req, res) => {
                 statusCode: 401
             })
         }
-
+        const authorized = admin.authorized;
         if (!authorized) {
             return res.status(401).json({
                 status: false,
@@ -55,7 +55,8 @@ exports.adminLogin = async(req, res) => {
             data: {
                 fullname: admin.fullname,
                 email: admin.email,
-                accessJWT
+                accessJWT,
+                role: admin.role
             }
         })
     } catch (error) {
@@ -112,6 +113,7 @@ exports.adminRegister = async(req, res) => {
             data: {
                 fullname: admin.fullname,
                 email: admin.email,
+                role: admin.role
             },
             statusCode: 200
         })
@@ -131,7 +133,8 @@ exports.adminRegister = async(req, res) => {
 exports.getAllUsers = async(req, res) => {
     try {
         // check if email exists
-        const emailExist = await adminUserModel.find().populate('email', '-password', 'fullname', 'role', '_id');
+        const emailExist = await adminUserModel.find()
+        console.log(emailExist);
         if(emailExist){
             res.status(200).json({
                 status: true,
@@ -148,15 +151,6 @@ exports.getAllUsers = async(req, res) => {
                 statusCode: 400
             })
         }
-        res.json({
-            status: true,
-            msg: 'Admin user successfully created',
-            data: {
-                fullname: admin.fullname,
-                email: admin.email,
-            },
-            statusCode: 200
-        })
 
     } catch (error) {
         console.log(error);
@@ -200,48 +194,51 @@ exports.deleteAdmin = async(req, res) => {
 
 
 exports.authorizeAdmin = async(req, res) => {
-    try{
-        const adminUser = await adminUserModel.findOne({"_id":req.query.userId});
-        console.log(adminUser.authorized)
-        if(adminUser.authorized){
-            const admin = await adminUserModel.findOneAndUpdate({"_id":req.query.userId}
-            ,{"$set":{"authorized":false}},{new:true});
-            if(admin){
-                res.status(200).json({
-                    status: true,
-                    msg: 'Admin authorized',
-                    data: {
-                        admin
-                    },
-                    statusCode: 200
-                })
-            }else{
-                res.status(400).json({
-                    status: false,
-                    msg: 'Admin authorization failed',
-                    statusCode: 400
-                })
-            }
+    try{    
+        const admin = await adminUserModel.findOneAndUpdate({"_id":req.query.adminId}
+        ,{"$set":{"authorized":true}},{new:true});
+        console.log(admin);
+        if(admin){
+            res.status(200).json({
+                status: true,
+                msg: 'Admin authorized',
+                statusCode: 200
+            })
         }else{
-            const admin = await adminUserModel.findOneAndUpdate({"_id":req.query.userId}
-            ,{"$set":{"authorized":true}},{new:true});
-            console.log(admin);
-            if(admin){
-                res.status(200).json({
-                    status: true,
-                    msg: 'Admin unauthorized',
-                    data: {
-                        admin
-                    },
-                    statusCode: 200
-                })
-            }else{
-                res.status(400).json({
-                    status: false,
-                    msg: 'Admin unauthorization failed',
-                    statusCode: 400
-                })
-            }
+            res.status(400).json({
+                status: false,
+                msg: 'Admin authorization failed',
+                statusCode: 400
+            })
+        };
+    }catch(error){
+        res.status(500).send({
+            status: false,
+            msg: 'Internal Server Error',
+            data: null,
+            statusCode: 500
+        });
+    }
+};
+
+
+exports.unauthorizeAdmin = async(req, res) => {
+    try{    
+        const admin = await adminUserModel.findOneAndUpdate({"_id":req.query.adminId}
+        ,{"$set":{"authorized":false}},{new:true});
+        console.log(admin);
+        if(admin){
+            res.status(200).json({
+                status: true,
+                msg: 'Admin unauthorized',
+                statusCode: 200
+            })
+        }else{
+            res.status(400).json({
+                status: false,
+                msg: 'Admin unauthorization failed',
+                statusCode: 400
+            })
         };
     }catch(error){
         res.status(500).send({
